@@ -12,6 +12,11 @@ import {
     Menu,
     Submenu,
     MenuItem,
+    Breadcrumb,
+    BreadcrumbItem,
+    Card,
+    Row,
+    Col
 } from 'element-ui'
 
 Vue.use(Button)
@@ -25,6 +30,12 @@ Vue.use(Main)
 Vue.use(Menu)
 Vue.use(Submenu)
 Vue.use(MenuItem)
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Card)
+Vue.use(Row)
+Vue.use(Col)
+
 
 // 挂载消息弹窗到Vue实例上
 Vue.prototype.$message = Message
