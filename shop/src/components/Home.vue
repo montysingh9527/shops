@@ -14,8 +14,12 @@
     <el-aside :width="isCollapse ? '64px' : '200px'">
       <div class="toggle-button" @click="toggleCollapse" v-if="isCollapse">》》》</div>
       <div class="toggle-button" @click="toggleCollapse" v-else-if="!isCollapse">《《《</div>
-       <!-- unique-opened设置一级菜单折叠栏只展开当前项默认为true ；collapse-transition折叠动画 -->
-      <el-menu background-color="#545c64" text-color="#fff" active-text-color="#29ACDB" unique-opened :collapse="isCollapse" :collapse-transition="false">
+       <!-- unique-opened设置一级菜单折叠栏只展开当前项默认为true ；collapse-transition折叠动画; router启用该模式会在激活导航时以 index 作为 path 进行路由跳转-->
+      <el-menu background-color="#545c64" text-color="#fff" active-text-color="#29ACDB" 
+      unique-opened 
+      :collapse="isCollapse" 
+      :collapse-transition="false" 
+      router>
         <!-- 一级菜单 index值只能是字符串-->
       <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
         <!-- 一级菜单的模板区域 -->
@@ -24,7 +28,7 @@
           <i :class="iconsObj[item.id]"></i>
           <span>{{item.authName}}</span>
         </template>
-        <el-menu-item :index="subitem.id + ''" v-for="subitem in item.children" :key="subitem.id">
+        <el-menu-item :index="'/' + subitem.path" v-for="subitem in item.children" :key="subitem.id">
           <template slot="title">
             <i class="el-icon-menu"></i>
             <span>{{subitem.authName}}</span>
@@ -77,7 +81,6 @@ export default {
      this.menulist = res.data
      if(res.meta.status!=200) return this.$massage.error(res.meta.msg)
      console.log(res)
-     console.log(this.menulist)
     },
     // 折叠一级菜单
     toggleCollapse(){
