@@ -20,7 +20,8 @@
       unique-opened 
       :collapse="isCollapse" 
       :collapse-transition="false" 
-      router>
+      router
+      :default-active="activePath">
         <!-- 一级菜单 index值只能是字符串-->
       <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
         <!-- 一级菜单的模板区域 -->
@@ -29,7 +30,9 @@
           <i :class="iconsObj[item.id]"></i>
           <span>{{item.authName}}</span>
         </template>
-        <el-menu-item :index="'/' + subitem.path" v-for="subitem in item.children" :key="subitem.id">
+        <!-- 二级菜单 -->
+        <el-menu-item :index="'/' + subitem.path" v-for="subitem in item.children" :key="subitem.id"
+         @click="saveNavState('/' + subitem.path)">
           <template slot="title">
             <i class="el-icon-menu"></i>
             <span>{{subitem.authName}}</span>
@@ -64,11 +67,15 @@ export default {
       },
       // 是否折叠一级菜单
       isCollapse: false,
+      // 被激活二级路由地址
+      activePath:''
     };
   },
   created(){
     // 在created阶段请求左侧菜单数据
-    this.getMenuList()  
+    this.getMenuList(),
+    // 获取二级菜单激活状态
+    this.activePath = window.sessionStorage.getItem('activePath')
   },
   methods: {
     logout() {
@@ -86,6 +93,11 @@ export default {
     // 折叠一级菜单
     toggleCollapse(){
       this.isCollapse = !this.isCollapse
+    },
+    // 将二级菜单激活状态保存
+    saveNavState(activePath){
+      window.sessionStorage.setItem('activePath',activePath)
+      this.activePath = activePath
     }
   },
 };
