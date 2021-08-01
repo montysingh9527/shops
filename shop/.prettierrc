@@ -1,0 +1,4 @@
+{
+  "semi": false,   // {}末尾去除;号
+  "singleQuote": true  // '' 替换 "" 
+}
