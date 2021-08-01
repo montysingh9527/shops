@@ -14,19 +14,19 @@
     <el-aside width="200px">
       <el-menu background-color="#545c64"
       text-color="#fff"
-      active-text-color="#ffd04b">
-        <!-- 一级菜单 -->
-      <el-submenu index="1">
+      active-text-color="#29ACDB">
+        <!-- 一级菜单 index值只能是字符串-->
+      <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
         <!-- 一级菜单的模板区域 -->
         <template slot="title">
           <!-- 图标 -->
           <i class="el-icon-location"></i>
-          <span>导航一</span>
+          <span>{{item.authName}}</span>
         </template>
-        <el-menu-item index="1-4-1">
+        <el-menu-item :index="subitem.id + ''" v-for="subitem in item.children" :key="subitem.id">
           <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>导航一</span>
+            <i class="el-icon-menu"></i>
+            <span>{{subitem.authName}}</span>
             </template>
         </el-menu-item>
       </el-submenu>      
@@ -42,13 +42,29 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      // 左侧菜单数据
+      menulist:[]
+    };
+  },
+  created(){
+    // 在created阶段请求左侧菜单数据
+    this.getMenuList()  
   },
   methods: {
     logout() {
       window.sessionStorage.clear();
       this.$router.push("/login");
     },
+   async getMenuList(){
+     // 发送请求获取左侧菜单数据
+     const {data:res} = await this.$http.get('menus')
+     // 将数据存放到menulist列表中
+     this.menulist = res.data
+     if(res.meta.status!=200) return this.$massage.error(res.meta.msg)
+     console.log(res)
+     console.log(this.menulist)
+    }
   },
 };
 </script>
