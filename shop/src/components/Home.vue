@@ -10,16 +10,17 @@
   </el-header>
    <!-- 页面主体区域 -->
   <el-container>
-     <!-- 侧边栏 -->
-    <el-aside width="200px">
-      <el-menu background-color="#545c64"
-      text-color="#fff"
-      active-text-color="#29ACDB">
+     <!-- 侧边栏-->
+    <el-aside :width="isCollapse ? '64px' : '200px'">
+      <div class="toggle-button" @click="toggleCollapse" v-if="isCollapse">》》》</div>
+      <div class="toggle-button" @click="toggleCollapse" v-else-if="!isCollapse">《《《</div>
+       <!-- unique-opened设置一级菜单折叠栏只展开当前项默认为true ；collapse-transition折叠动画 -->
+      <el-menu background-color="#545c64" text-color="#fff" active-text-color="#29ACDB" unique-opened :collapse="isCollapse" :collapse-transition="false">
         <!-- 一级菜单 index值只能是字符串-->
       <el-submenu :index="item.id + ''" v-for="item in menulist" :key="item.id">
         <!-- 一级菜单的模板区域 -->
         <template slot="title">
-          <!-- 图标 -->
+          <!-- 图标 设置一级菜单字体图标-->
           <i :class="iconsObj[item.id]"></i>
           <span>{{item.authName}}</span>
         </template>
@@ -53,6 +54,8 @@ export default {
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },
+      // 是否折叠一级菜单
+      isCollapse: false,
     };
   },
   created(){
@@ -72,6 +75,10 @@ export default {
      if(res.meta.status!=200) return this.$massage.error(res.meta.msg)
      console.log(res)
      console.log(this.menulist)
+    },
+    // 折叠一级菜单
+    toggleCollapse(){
+      this.isCollapse = !this.isCollapse
     }
   },
 };
@@ -99,6 +106,9 @@ export default {
 }
 .el-aside{
   background-color: #B9D0E2;
+  .el-menu{
+    border-right:none;
+  }
 }
 .el-main{
   background-color: #F4F4F4;
@@ -106,5 +116,15 @@ export default {
 // 字体图标和一级菜单间距
 .iconfont{
   margin-right: 10px;
+}
+// 折叠一级菜单
+.toggle-button {
+  background-color: #4a5064;
+  font-size: 10px;
+  line-height: 24px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.2em;
+  cursor: pointer;
 }
 </style>
