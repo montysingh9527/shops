@@ -88,7 +88,7 @@ export default {
      // 将数据存放到menulist列表中
      this.menulist = res.data
      if(res.meta.status!=200) return this.$massage.error(res.meta.msg)
-     console.log(res)
+     console.log('菜单列表',res)
     },
     // 折叠一级菜单
     toggleCollapse(){

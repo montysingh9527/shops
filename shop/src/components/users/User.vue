@@ -19,7 +19,17 @@
                     <el-button type="primary">添加用户</el-button>
                 </el-col>
             </el-row>
-        </el-card>
+            <!-- 用户列表区域 -->
+            <el-table :data="userlist" border stripe>
+                <el-table-column type="index"></el-table-column>
+                <el-table-column label="姓名" prop="username"></el-table-column>
+                <el-table-column label="邮箱" prop="email"></el-table-column>
+                <el-table-column label="电话" prop="mobile"></el-table-column>
+                <el-table-column label="角色" prop="role_name"></el-table-column>
+                <el-table-column label="状态"></el-table-column>
+                <el-table-column label="操作" width="180px"></el-table-column>
+            </el-table>
+        </el-card>        
     </div>
 </template>
 
@@ -27,8 +37,33 @@
 export default {
     data(){
         return{
-
+            // 获取用户列表的参数对象
+            queryInfo: {
+                query: '',
+                // 当前的页数
+                pagenum: 1,
+                // 当前每页显示多少条数据
+                pagesize: 3
+            },
+            // 管理员列表
+            userlist: [],
+            // 总数
+            total: 0,
         }
+    },
+    created(){
+        this.getUserList()
+    },
+    methods:{
+       async getUserList(){
+           const {data:res} = await this.$http.get('users',{ params:this.queryInfo})
+           if(res.meta.status != 200) {
+               return this.$massage.error('获取管理员数据失败')
+               }
+           this.userlist = res.data.users
+           this.total = res.data.total
+           console.log('管理员',res)
+        }   
     }
 }
 </script>
