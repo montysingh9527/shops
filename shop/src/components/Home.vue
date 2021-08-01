@@ -14,7 +14,8 @@
     <el-aside :width="isCollapse ? '64px' : '200px'">
       <div class="toggle-button" @click="toggleCollapse" v-if="isCollapse">》》》</div>
       <div class="toggle-button" @click="toggleCollapse" v-else-if="!isCollapse">《《《</div>
-       <!-- unique-opened设置一级菜单折叠栏只展开当前项默认为true ；collapse-transition折叠动画; router启用该模式会在激活导航时以 index 作为 path 进行路由跳转-->
+       <!-- unique-opened设置一级菜单折叠栏只展开当前项默认为true ；collapse-transition折叠动画;
+        router启用该模式会在激活导航时以 index 作为 path 进行路由跳转-->
       <el-menu background-color="#545c64" text-color="#fff" active-text-color="#29ACDB" 
       unique-opened 
       :collapse="isCollapse" 
