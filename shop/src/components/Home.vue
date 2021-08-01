@@ -20,7 +20,7 @@
         <!-- 一级菜单的模板区域 -->
         <template slot="title">
           <!-- 图标 -->
-          <i class="el-icon-location"></i>
+          <i :class="iconsObj[item.id]"></i>
           <span>{{item.authName}}</span>
         </template>
         <el-menu-item :index="subitem.id + ''" v-for="subitem in item.children" :key="subitem.id">
@@ -44,7 +44,15 @@ export default {
   data() {
     return {
       // 左侧菜单数据
-      menulist:[]
+      menulist:[],
+      // 菜单图标 键:一级菜单id(item.id) 值:字体图标
+      iconsObj: {
+        '125': 'iconfont icon-user',
+        '103': 'iconfont icon-tijikongjian',
+        '101': 'iconfont icon-shangpin',
+        '102': 'iconfont icon-danju',
+        '145': 'iconfont icon-baobiao'
+      },
     };
   },
   created(){
@@ -94,5 +102,9 @@ export default {
 }
 .el-main{
   background-color: #F4F4F4;
+}
+// 字体图标和一级菜单间距
+.iconfont{
+  margin-right: 10px;
 }
 </style>
