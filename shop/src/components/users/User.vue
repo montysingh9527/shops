@@ -28,7 +28,7 @@
                 <el-table-column label="角色" prop="role_name"></el-table-column>
                 <el-table-column label="状态">
                     <template slot-scope="scope">
-                        <el-switch  v-model="scope.row.mg_state">
+                        <el-switch  v-model="scope.row.mg_state" @change="changeState(scope.row)">
                         </el-switch>
                     </template>
                 </el-table-column>
@@ -68,7 +68,7 @@ export default {
             },
             // 管理员列表
             userlist: [],
-            // 总数
+            // 管理员数据总条数
             total: 0,
         }
     },
@@ -86,18 +86,27 @@ export default {
         },
         // 分页器 监听 pagesize 改变的事件
         handleSizeChange(val){
-            console.log('显示条数',val)
             this.queryInfo.pagesize = val
             // 重新获取数据
             this.getUserList()
         },
         // 分页器 监听 页码值 改变的事件
         handleCurrentChange(val){
-            console.log('当前页',val)
             this.queryInfo.pagenum = val
             // 重新获取数据
             this.getUserList()
-        }   
+        },
+        // 将用户修改的状态，保存到数据库
+        async changeState(scopeRow){
+            // 接口地址：users/:uId/state/:type 请求方法：put
+           const {data:res} = await this.$http.put(`users/${scopeRow.id}/state/${scopeRow.mg_state}`)
+           if(res.meta.status != 200){
+               // 如果状态更新失败，按钮重置为原来的
+               scopeRow.mg_state = !scopeRow.mg_state
+               this.$massage.error('用户状态更新失败')
+           }
+           this.$message.success('更新用户状态成功！')
+        }  
     }
 }
 </script>
