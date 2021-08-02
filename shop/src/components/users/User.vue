@@ -45,6 +45,11 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <!-- 分页区域 -->
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+            :current-page="queryInfo.pagenum" :page-sizes="[3, 5, 10, 20]" :page-size="queryInfo.pagesize" 
+            layout="total, sizes, prev, pager, next, jumper" :total="total">
+            </el-pagination>
         </el-card>        
     </div>
 </template>
@@ -68,17 +73,30 @@ export default {
         }
     },
     created(){
+        // 在页面渲染前加载数据
         this.getUserList()
     },
     methods:{
+        // 获取数据
        async getUserList(){
            const {data:res} = await this.$http.get('users',{ params:this.queryInfo})
-           if(res.meta.status != 200) {
-               return this.$massage.error('获取管理员数据失败')
-               }
+           if(res.meta.status != 200) { return this.$massage.error('获取管理员数据失败')}
            this.userlist = res.data.users
            this.total = res.data.total
-           console.log('管理员',res)
+        },
+        // 分页器 监听 pagesize 改变的事件
+        handleSizeChange(val){
+            console.log('显示条数',val)
+            this.queryInfo.pagesize = val
+            // 重新获取数据
+            this.getUserList()
+        },
+        // 分页器 监听 页码值 改变的事件
+        handleCurrentChange(val){
+            console.log('当前页',val)
+            this.queryInfo.pagenum = val
+            // 重新获取数据
+            this.getUserList()
         }   
     }
 }
