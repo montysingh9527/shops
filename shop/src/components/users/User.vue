@@ -37,7 +37,7 @@
                     </el-form>
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="addDialogVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="addDialogVisible = false">确 定</el-button>
+                        <el-button type="primary" @click="addUser">确 定</el-button>
                     </span>
                 </el-dialog>  
             </el-row>            
@@ -89,15 +89,6 @@ export default {
         }
             callback(new Error('请输入合法的邮箱'))
         }
-        // 自定义手机号的验证规则
-        var checkMobile = (rule, value, callback) => {
-        // 验证手机号的正则表达式
-        const regMobile = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
-        if (regMobile.test(value)) {
-            return callback()
-        }
-            callback(new Error('请输入合法的手机号'))
-        }
 
         return{
             // 获取用户列表的参数对象
@@ -138,7 +129,7 @@ export default {
                 ],
                 mobile: [
                     { required: false, message: '请输入手机号', trigger: 'blur' },
-                    { validator: checkMobile, trigger: 'blur' }
+                    { min: 8, max: 15, message: '长度在 8 到 15 个字符', trigger: 'blur' }
                 ],
             }
         }
@@ -179,11 +170,26 @@ export default {
            }
            this.$message.success('更新用户状态成功！')
         },
-        // 添加用户对话框的关闭事件,关闭弹窗清空表单项
+        // 添加用户对话框的关闭事件,关闭弹窗清空表单项 resetFields()方法
         addDialogClosed(){
             this.$refs.addFormRef.resetFields()
-            console.log(this.$refs)
-        }  
+        },
+        // 添加新用户点击按钮  valid为true时表单验证通过,发起请求
+        addUser() {
+        this.$refs.addFormRef.validate(async valid => {
+            if (!valid) return
+            // 可以发起添加用户的网络请求
+            const { data: res } = await this.$http.post('users', this.addForm)
+            if (res.meta.status !== 201) {
+                this.$message.error('添加用户失败！')
+            }
+            this.$message.success('添加用户成功！')
+            // 隐藏添加用户的弹窗
+            this.addDialogVisible = false
+            // 重新获取用户列表数据
+            this.getUserList()
+            })
+        }
     }
 }
 </script>
