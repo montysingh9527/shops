@@ -16,10 +16,10 @@
                     </el-input>
                 </el-col>
                 <el-col :span="6">
-                    <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
+                    <el-button type="primary" @click="addDialogVisible = true" >添加用户</el-button>
                 </el-col>
                 <!-- 添加用户对话框 -->
-                <el-dialog title="添加用户"  :visible.sync="addDialogVisible"  width="40%" >
+                <el-dialog title="添加用户"  :visible.sync="addDialogVisible"  width="40%" @close="addDialogClosed">
                     <el-form ref="addFormRef" :model="addForm" :rules="addFormRules" label-width="70px">
                         <!-- 用户名 -->
                         <el-form-item label="用户名" prop="username">
@@ -178,6 +178,11 @@ export default {
                this.$massage.error('用户状态更新失败')
            }
            this.$message.success('更新用户状态成功！')
+        },
+        // 添加用户对话框的关闭事件,关闭弹窗清空表单项
+        addDialogClosed(){
+            this.$refs.addFormRef.resetFields()
+            console.log(this.$refs)
         }  
     }
 }
