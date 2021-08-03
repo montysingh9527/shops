@@ -11,8 +11,8 @@
             <!-- 搜索与添加区域 -->
             <el-row :gutter="20">
                 <el-col :span="8">
-                    <el-input placeholder="请输入内容">
-                    <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
+                    <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
                     </el-input>
                 </el-col>
                 <el-col :span="6">
@@ -98,6 +98,7 @@ export default {
         },
         // 将用户修改的状态，保存到数据库
         async changeState(scopeRow){
+            console.log(scopeRow)
             // 接口地址：users/:uId/state/:type 请求方法：put
            const {data:res} = await this.$http.put(`users/${scopeRow.id}/state/${scopeRow.mg_state}`)
            if(res.meta.status != 200){
