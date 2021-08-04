@@ -59,7 +59,7 @@
                         <!-- 修改按钮 -->
                        <el-button type="primary" icon="el-icon-edit" circle @click="showEditDialog(scope.row.id)"></el-button>
                        <!-- 删除按钮 -->
-                       <el-button type="danger" icon="el-icon-delete" circle></el-button>
+                       <el-button type="danger" icon="el-icon-delete" circle @click="removeUserById(scope.row.id)"></el-button>
                        <!-- 分配角色按钮 -->
                        <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
                             <el-button type="warning" icon="el-icon-setting" circle></el-button>
@@ -193,7 +193,7 @@ export default {
         },
         // 将用户修改的状态，保存到数据库
         async changeState(scopeRow){
-            console.log(scopeRow)
+            // console.log(scopeRow)
             // 接口地址：users/:uId/state/:type 请求方法：put
            const {data:res} = await this.$http.put(`users/${scopeRow.id}/state/${scopeRow.mg_state}`)
            if(res.meta.status != 200){
@@ -233,7 +233,7 @@ export default {
             this.editForm = res.data
             this.editDialogVisible = true
             },
-            // 监听修改用户对话框的关闭事件
+            // 监听修改用户对话框的关闭事件,清空表单数据resetFields()
             editDialogClosed() {
                 this.$refs.editFormRef.resetFields()
         },
@@ -258,7 +258,33 @@ export default {
                 // 提示修改成功
                 this.$message.success('更新用户信息成功！')
             })
-        }
+        },
+        // 用户列表-操作-删除用户根据Id删除对应的用户信息
+        async removeUserById(id) {
+             // 弹框询问用户是否删除数据
+            const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?','提示',
+                {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+                }
+                // 捕获异常
+            ).catch(err =>{
+               return err
+            })
+            // 如果用户确认删除,则返回值为字符串confirm,如果用户取消了删除,则返回值为字符串cancel
+            // console.log(confirmResult)
+            if (confirmResult !== 'confirm') {
+                return this.$message.info('已取消删除')
+            }
+            const {data:res} = await this.$http.delete('users/' + id)
+            if(res.meta.status != 200){
+                this.$massage.error('删除用户失败！')
+            }
+                this.$message.success('删除用户成功')
+                // 刷新列表
+                this.getUserList()                
+            }
     }
 }
 </script>
