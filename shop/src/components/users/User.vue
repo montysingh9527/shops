@@ -154,6 +154,17 @@ export default {
             editDialogVisible: false,
             // 修改用户查询到的用户信息对象
             editForm: {},
+            // 修改用户表单的验证规则对象
+            editFormRules: {
+                email: [
+                    { required: true, message: '请输入用户邮箱', trigger: 'blur' },
+                    { validator: checkEmail, trigger: 'blur' }
+                ],
+                mobile: [
+                    { required: true, message: '请输入用户手机', trigger: 'blur' },
+                    { min: 8, max: 15, message: '长度在 8 到 15 个字符', trigger: 'blur' }
+                ]
+            }
         }
     },
     created(){
@@ -214,17 +225,39 @@ export default {
         },
         // 修改用户资料弹窗
         async showEditDialog(id) {
-        // console.log(id)
-        const { data: res } = await this.$http.get('users/' + id)
-        if (res.meta.status !== 200) {
-            return this.$message.error('查询用户信息失败！')
-        }
-        this.editForm = res.data
-        this.editDialogVisible = true
+            // console.log(id)
+            const { data: res } = await this.$http.get('users/' + id)
+            if (res.meta.status !== 200) {
+                return this.$message.error('查询用户信息失败！')
+            }
+            this.editForm = res.data
+            this.editDialogVisible = true
+            },
+            // 监听修改用户对话框的关闭事件
+            editDialogClosed() {
+                this.$refs.editFormRef.resetFields()
         },
-        // 监听修改用户对话框的关闭事件
-        editDialogClosed() {
-        this.$refs.editFormRef.resetFields()
+        //用户列表-操作列- 修改用户信息并提交
+        editUserInfo() {
+            this.$refs.editFormRef.validate(async valid => {
+                if (!valid) return
+                // 发起修改用户信息的数据请求
+                const { data: res } = await this.$http.put('users/' + this.editForm.id,
+                {
+                    email: this.editForm.email,
+                    mobile: this.editForm.mobile
+                }
+                )
+                if (res.meta.status !== 200) {
+                    return this.$message.error('更新用户信息失败！')
+                }
+                // 关闭对话框
+                this.editDialogVisible = false
+                // 刷新数据列表
+                this.getUserList()
+                // 提示修改成功
+                this.$message.success('更新用户信息成功！')
+            })
         }
     }
 }
