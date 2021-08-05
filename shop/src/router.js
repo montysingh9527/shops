@@ -12,7 +12,8 @@ const router = new Router({
       redirect: '/welcome',
       children: [
         {path: '/welcome', component: () => import('./components/Welcome.vue')},
-        {path: '/users', component: () => import('./components/users/User.vue')}
+        {path: '/users', component: () => import('./components/users/User.vue')},
+        {path: '/rights', component: () => import('./components/power/Rights.vue')}
       ]
     }
   ]
