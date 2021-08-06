@@ -13,7 +13,8 @@ const router = new Router({
       children: [
         {path: '/welcome', component: () => import('./components/Welcome.vue')},
         {path: '/users', component: () => import('./components/users/User.vue')},
-        {path: '/rights', component: () => import('./components/power/Rights.vue')}
+        {path: '/rights', component: () => import('./components/power/Rights.vue')},
+        {path: '/roles', component: () => import('./components/power/Roles.vue')}
       ]
     }
   ]
