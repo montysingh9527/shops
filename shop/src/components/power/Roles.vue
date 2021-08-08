@@ -50,7 +50,7 @@
                     <!-- 修改按钮 -->
                     <el-button type="primary" icon="el-icon-edit" size="mini" @click="editRoles(scope.row.id)">编辑</el-button>
                     <!-- 删除按钮 -->
-                    <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRoles(scope.row.id)">删除</el-button>
+                    <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRoles(scope.row.id,scope.row.roleName)">删除</el-button>
                     <!-- 分配角色按钮 -->
                     <el-tooltip effect="dark" content="分配权限" placement="top" :enterable="false">
                         <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
@@ -134,8 +134,8 @@ export default {
              })
         },
     //删除角色 请求路径：roles/:id 请求方法：delete
-    deleteRoles(rolesId){
-       this.$confirm('是否删除该角色！', '提示', {           
+    deleteRoles(rolesId,roleName){        
+       this.$confirm(`是否【${roleName}】删除该角色！`,'提示', {           
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
