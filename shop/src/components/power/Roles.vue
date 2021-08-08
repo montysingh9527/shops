@@ -21,6 +21,21 @@
         <el-button type="primary" @click="postRolesInfo">确 定</el-button>
     </span>
     </el-dialog>
+    <!-- 编辑角色权限 -->
+    <el-dialog title="修改角色" :visible.sync="editdialogVisibleRoles" width="30%">
+    <el-form :model="editRolesForm" label-width="100px">
+            <el-form-item label="角色名称：">
+                <el-input v-model="editRolesForm.roleName"></el-input>
+            </el-form-item>
+            <el-form-item label="角色描述：">
+                <el-input v-model="editRolesForm.roleDesc"></el-input>
+            </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editdialogVisibleRoles = false">取 消</el-button>
+        <el-button type="primary" @click="editRolesName">确 定</el-button>
+    </span>
+    </el-dialog>
     <!-- 卡片视图区域 -->        
     <el-card class="box-card">
         <el-button type="primary" @click="dialogVisibleRoles = true">添加角色</el-button>
@@ -30,8 +45,10 @@
             <el-table-column label="角色描述" prop="roleDesc"></el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
+                    <!-- {{scope.row}}
+                    {{scope.row.roleName}} -->
                     <!-- 修改按钮 -->
-                    <el-button type="primary" icon="el-icon-edit" size="mini" >编辑</el-button>
+                    <el-button type="primary" icon="el-icon-edit" size="mini" @click="editRoles(scope.row.id,scope.row.roleName)">编辑</el-button>
                     <!-- 删除按钮 -->
                     <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
                     <!-- 分配角色按钮 -->
@@ -55,9 +72,13 @@ export default {
             rolesInfo:{
                 roleName:'',
                 roleDesc:''
-            },
+            },            
             // 添加角色弹窗
-            dialogVisibleRoles:false
+            dialogVisibleRoles:false,
+            // 编辑用户查询到的用户信息
+            editRolesForm: {},
+            // 编辑角色弹窗
+            editdialogVisibleRoles:false
         }
     },
     created(){
@@ -74,7 +95,7 @@ export default {
         }
         this.rolesList = res.data
       },
-      // 添加角色
+    // 添加角色
     async postRolesInfo(){
          // 发起请求添加角色
          const {data:res} =await this.$http.post('roles',this.rolesInfo)
@@ -89,8 +110,31 @@ export default {
         // 关闭添加角色弹窗，清空表单数据
          handleCloseRoles(){
           this.rolesInfo = {}
-        }         
-    }
+        },
+    // 编辑用户按钮
+    async editRoles(rolesId){
+        // console.log(rolesId)
+        const {data:res} = await this.$http.get('roles/' + rolesId)
+        // console.log(res)  
+        if(res.meta.status != 200){
+            return this.$message.error('获取数据失败')
+        }
+        this.editRolesForm = res.data
+        this.editdialogVisibleRoles= true             
+        },
+    // 提交编辑用户信息 路径：roles/:id  请求方式：put
+    async editRolesName(){
+            this.$http.put('roles/' + this.editRolesForm.roleId,{
+               roleName:this.editRolesForm.roleName,
+               roleDesc:this.editRolesForm.roleDesc
+            }).then(()=>{
+                this.$message.success('编辑用户信息成功！')
+                this.editdialogVisibleRoles=false,
+                this.getRolesList()
+             })
+        }
+
+    }     
 }
 </script>
 
