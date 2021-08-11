@@ -22,6 +22,12 @@ axios.interceptors.request.use(config=>{
 // 将axios挂载到Vue实例上，通过this.$http访问
 Vue.prototype.$http = axios
 
+// 商品分类树形结构插件
+import TreeTable from 'vue-table-with-tree-grid'
+// 注册tree-table组件
+Vue.component('tree-table', TreeTable)
+
+
 Vue.config.productionTip = false
 
 new Vue({
