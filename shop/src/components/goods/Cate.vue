@@ -16,7 +16,19 @@
         </el-row>
         <!-- 树形结构插件vue-table-with-tree-grid -->
         <tree-table :data="cateList" :columns="columns" :selection-type="false" :expand-type="false" :show-row-hover="false" border show-index>
-
+            <template slot="isok" slot-scope="scope">
+                <i class="el-icon-success" style="color: #39CE39" v-if="scope.row.cat_deleted == false"></i>
+                <i class="el-icon-error" style="color: #AA1C15" v-else></i>
+            </template>
+            <template slot="sort" slot-scope="scope">
+                <el-tag v-if="scope.row.cat_level === 0" size="mini">一级</el-tag>
+                <el-tag type="success" v-else-if="scope.row.cat_level === 1" size="mini">二级</el-tag>
+                <el-tag type="danger" size="mini" v-else>三级</el-tag>
+            </template>
+            <template slot="operate" slot-scope="scope">
+                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+            </template>
         </tree-table>
     </el-card>            
 </div>
@@ -40,7 +52,23 @@ export default {
             columns: [{
                 label: '分类名称',
                 prop: 'cat_name',
-            }]   
+            },
+            {
+            label: '是否有效',
+            type: 'template',
+            template: 'isok',
+            },
+            {
+            label: '排序',
+            type: 'template',
+            template: 'sort',
+            },
+            {
+            label: '操作',
+            type: 'template',
+            template: 'operate',
+            }            
+            ]   
         }
     },
 
