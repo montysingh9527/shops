@@ -28,8 +28,13 @@
             <template slot="operate" slot-scope="scope">
                 <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
                 <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
-            </template>
+            </template>            
         </tree-table>
+        <!-- 分页区域 -->
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" 
+        :current-page="queryInfo.pagenum" :page-sizes="[5, 10, 20, 50]" :page-size="queryInfo.pagesize" 
+        layout="total, sizes, prev, pager, next, jumper" :total="total">
+        </el-pagination>
     </el-card>            
 </div>
 </template>
@@ -78,15 +83,25 @@ export default {
     methods:{
        getCateList(){
            this.$http.get('categories',{params:this.queryInfo}).then((res)=>{
-                console.log('res',res.data.data.result)
+                // console.log('res',res.data.data.result)
                 // 把数据列表，赋值给 catelist
                 this.cateList = res.data.data.result
                 // 为总数据条数赋值
-                this.total = res.data.total            
+                this.total = res.data.data.total     
            }).catch(()=>{
                this.$message.error('获取数据失败')
            })
-       }
+       },
+        // 分页器 监听 pagesize 改变的事件
+        handleSizeChange(val){
+            this.queryInfo.pagesize = val
+            this.getCateList()
+        },
+        // 分页器 监听 页码值 改变的事件
+        handleCurrentChange(val){
+            this.queryInfo.pagenum = val
+            this.getCateList()
+        }
     }
 
 }     
