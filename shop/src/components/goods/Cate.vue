@@ -26,7 +26,7 @@
                 <el-tag type="danger" size="mini" v-else>三级</el-tag>
             </template>
             <template slot="operate" slot-scope="scope">
-                <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
+                <el-button @click="editForm(scope.row.cat_id)" type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
                 <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
             </template>            
         </tree-table>
@@ -51,6 +51,18 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addCateDialog = false">取 消</el-button>
                 <el-button type="primary" @click="addCatePost">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- 编辑分类弹窗 -->
+        <el-dialog title="编辑商品分类" :visible.sync="editCateDialog" width="30%">
+            <el-form :model="editCateForm" label-width="100px">
+                <el-form-item label="分类名称" prop="cat_name">
+                    <el-input v-model="editCateForm.cat_name"></el-input>
+                </el-form-item>                
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editCateDialog = false">取 消</el-button>
+                <el-button type="primary" @click="editCatePost">确 定</el-button>
             </span>
         </el-dialog>
     </el-card>            
@@ -109,7 +121,11 @@ export default {
                 children:'children',
             },
             // 选中的父级分类的Id数组
-            selectedkeys:[]
+            selectedkeys:[],
+            // 编辑分类是否弹窗
+            editCateDialog:false,
+            // 编辑分类数据
+            editCateForm:{}
         }
     },
     created(){
@@ -181,13 +197,42 @@ export default {
                 this.$message.error('添加分类失败！')
             })
         },
-        // 监听对话框的关闭事件，重置表单数据
+        // 监听添加对话框的关闭事件，重置表单数据
         addCateDialogClosed() {
             // console.log(this.addCateForm)
             this.addCateForm = {}
             this.selectedKeys = []
             this.addCateForm.cat_level = 0
             this.addCateForm.cat_pid = 0
+        },
+        /** 编辑分类 。 根据 id 查询分类- 请求路径：categories/:id- 请求方法：get 
+        请求参数:id 分类 ID 不能为空携带在url中*/
+        editForm(catid){
+            this.$http.get('categories/'+ catid).then(res=>{
+                if(res.data.meta.status === 200){
+                    // console.log(res.data)
+                    this.editCateForm = res.data.data
+                    this.editCateDialog = true
+                }                
+            }).catch(err=> 
+                console.log(err)
+            )
+        },
+        /** 点击确认按钮，提交编辑分类 。
+          - 请求路径：categories/:id - 请求方法：put  
+          请求参数: :id 分类 ID 不能为空携带在url中; cat_name 分类名称 不能为空【此参数，放到请求体中】*/
+        editCatePost(){
+            this.$http.put('categories/' + this.editCateForm.cat_id,{
+                cat_name:this.editCateForm.cat_name
+            }).then(res=>{
+                if(res.data.meta.status === 200){
+                    this.$message.success('编辑分类成功！')
+                    this.editCateDialog = false
+                    this.getCateList()
+                }
+            }).catch(err=>{
+                console.log(err)
+            })
         },
       
     },
