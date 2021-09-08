@@ -27,7 +27,7 @@
             </template>
             <template slot="operate" slot-scope="scope">
                 <el-button @click="editForm(scope.row.cat_id)" type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                <el-button @click="deleteCateForm(scope.row.cat_id)" type="danger" icon="el-icon-delete" size="mini">删除</el-button>
             </template>            
         </tree-table>
         <!-- 分页区域 -->
@@ -234,7 +234,23 @@ export default {
                 console.log(err)
             })
         },
-      
+        // 删除商品分类
+        deleteCateForm(catid){
+            this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http.delete('categories/' + catid)                
+                this.$message({type: 'success',message: '删除成功!'});
+                this.getCateList()
+            }).catch(() => {
+            this.$message({
+                type: 'info',
+                message: '已取消删除'
+            });          
+            });
+        }      
     },
 }     
 
