@@ -20,10 +20,10 @@
        <!-- 动态参数、静态属性tabs -->
        <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane label="动态参数" name="first">
-                <el-button type="primary" size="mini">动态参数</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisabled">动态参数</el-button>
             </el-tab-pane>
             <el-tab-pane label="静态属性" name="second">
-                <el-button type="primary" size="mini">静态属性</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisabled">静态属性</el-button>
             </el-tab-pane>
         </el-tabs>
     </el-card>
@@ -68,6 +68,16 @@
             // 动静态参数tabs选中切换
             handleTabClick(){
                 console.log(this.activeName)
+            }
+        },
+        computed: {
+            // 通过计算属性判断添加属性按钮是否启用
+            isBtnDisabled(){
+                if(this.cateKeys.length!==3){
+                    return true
+                }else{
+                    return false
+                }
             }
         }
     }
