@@ -20,10 +20,38 @@
        <!-- 动态参数、静态属性tabs -->
        <el-tabs v-model="activeName" @tab-click="handleTabClick">
             <el-tab-pane label="动态参数" name="only">
-                <el-button type="primary" size="mini" :disabled="isBtnDisabled">动态参数</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加参数</el-button>
+                <!-- 动态参数表格 -->
+                <el-table :data="onlyData" border stripe> 
+                    <!-- 展开行 -->
+                    <el-table-column type="expand"></el-table-column>
+                    <!-- 索引列 -->
+                    <el-table-column type="index"></el-table-column> 
+                    <el-table-column prop="attr_name" label="参数名称"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="primary" icon="el-icon-edit">修改</el-button>
+                            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+                        </template>
+                    </el-table-column>                    
+                </el-table>
             </el-tab-pane>
             <el-tab-pane label="静态属性" name="many">
-                <el-button type="primary" size="mini" :disabled="isBtnDisabled">静态属性</el-button>
+                <el-button type="primary" size="mini" :disabled="isBtnDisabled">添加属性</el-button>
+                <!-- 静态属性表格 -->
+                <el-table :data="manyData" border stripe> 
+                    <!-- 展开行 -->
+                    <el-table-column type="expand"></el-table-column>
+                    <!-- 索引列 -->
+                    <el-table-column type="index"></el-table-column> 
+                    <el-table-column prop="attr_name" label="属性名称"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="primary" icon="el-icon-edit">修改</el-button>
+                            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+                        </template>
+                    </el-table-column>                    
+                </el-table>
             </el-tab-pane>
         </el-tabs>
     </el-card>
@@ -72,22 +100,24 @@
 
             // 获取参数函数
             getParamsData(){
-                // 证明选中的不是三级分类
+                // 证明选中的不是三级分类,清空表格
                 // console.log(this.cateKeys)
                 if (this.cateKeys.length !== 3) {
                     this.cateKeys = []
+                    this.onlyData = []
+                    this.manyData = []
                     return
                 }else{
                     // 根据所选分类的Id，和当前所处的面板，获取对应的参数
                     this.$http.get(`categories/${this.idCate}/attributes`,{
                         params:{sel:this.activeName}
                     }).then(res=>{
+                        // console.log(res.data.data) 
+                        // 根据activeName 判断是静态还是动态
                        if(this.activeName=='only'){
                            this.onlyData = res.data.data
-                           console.log('only',this.onlyData)
                        }else{
                            this.manyData = res.data.data
-                           console.log('many',this.manyData)
                        }
                     })
                 }
