@@ -19,10 +19,10 @@
        </el-row>
        <!-- 动态参数、静态属性tabs -->
        <el-tabs v-model="activeName" @tab-click="handleTabClick">
-            <el-tab-pane label="动态参数" name="first">
+            <el-tab-pane label="动态参数" name="only">
                 <el-button type="primary" size="mini" :disabled="isBtnDisabled">动态参数</el-button>
             </el-tab-pane>
-            <el-tab-pane label="静态属性" name="second">
+            <el-tab-pane label="静态属性" name="many">
                 <el-button type="primary" size="mini" :disabled="isBtnDisabled">静态属性</el-button>
             </el-tab-pane>
         </el-tabs>
@@ -43,8 +43,12 @@
                 },
                 // 级联选择框双向绑定到的数组
                 cateKeys: [],
-                // 动静态参数选中项
-                activeName:'second'
+                // 动静态参数选中项[only,many]
+                activeName:'only',
+                // 动态数据
+                onlyData:[],
+                // 静态数据
+                manyData:[]
             }
         },
         created() {
@@ -57,17 +61,36 @@
                 //    console.log('cat',this.cateList)
                 })
             },
+            // 商品分类选择
             handleChange(){
+                this.getParamsData()
+            },
+            // 动静态参数tabs选中切换
+            handleTabClick(){
+                this.getParamsData()
+            },
+
+            // 获取参数函数
+            getParamsData(){
                 // 证明选中的不是三级分类
                 // console.log(this.cateKeys)
                 if (this.cateKeys.length !== 3) {
                     this.cateKeys = []
                     return
+                }else{
+                    // 根据所选分类的Id，和当前所处的面板，获取对应的参数
+                    this.$http.get(`categories/${this.idCate}/attributes`,{
+                        params:{sel:this.activeName}
+                    }).then(res=>{
+                       if(this.activeName=='only'){
+                           this.onlyData = res.data.data
+                           console.log('only',this.onlyData)
+                       }else{
+                           this.manyData = res.data.data
+                           console.log('many',this.manyData)
+                       }
+                    })
                 }
-            },
-            // 动静态参数tabs选中切换
-            handleTabClick(){
-                console.log(this.activeName)
             }
         },
         computed: {
@@ -77,6 +100,13 @@
                     return true
                 }else{
                     return false
+                }
+            },
+            idCate(){
+                if(this.cateKeys.length === 3){
+                    return this.cateKeys[2]
+                }else{
+                    return null
                 }
             }
         }
