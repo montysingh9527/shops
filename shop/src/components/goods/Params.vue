@@ -17,6 +17,15 @@
                <el-cascader expand-trigger="hover" v-model="cateKeys" :options="cateList" :props="cateProps"  @change="handleChange"></el-cascader>
            </el-col>       
        </el-row>
+       <!-- 动态参数、静态属性tabs -->
+       <el-tabs v-model="activeName" @tab-click="handleTabClick">
+            <el-tab-pane label="动态参数" name="first">
+                <el-button type="primary" size="mini">动态参数</el-button>
+            </el-tab-pane>
+            <el-tab-pane label="静态属性" name="second">
+                <el-button type="primary" size="mini">静态属性</el-button>
+            </el-tab-pane>
+        </el-tabs>
     </el-card>
 </div>
 </template>
@@ -33,7 +42,9 @@
                     children: 'children'
                 },
                 // 级联选择框双向绑定到的数组
-                cateKeys: []
+                cateKeys: [],
+                // 动静态参数选中项
+                activeName:'second'
             }
         },
         created() {
@@ -43,16 +54,20 @@
             getCateList(){
                 this.$http.get('/categories').then(res=>{
                    this.cateList = res.data.data
-                   console.log('cat',this.cateList)
+                //    console.log('cat',this.cateList)
                 })
             },
             handleChange(){
                 // 证明选中的不是三级分类
-                console.log(this.cateKeys)
+                // console.log(this.cateKeys)
                 if (this.cateKeys.length !== 3) {
                     this.cateKeys = []
                     return
                 }
+            },
+            // 动静态参数tabs选中切换
+            handleTabClick(){
+                console.log(this.activeName)
             }
         }
     }
