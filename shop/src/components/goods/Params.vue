@@ -30,7 +30,7 @@
                     <el-table-column prop="attr_name" label="参数名称"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" icon="el-icon-edit">修改</el-button>
+                            <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">修改</el-button>
                             <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
                         </template>
                     </el-table-column>                    
@@ -47,7 +47,7 @@
                     <el-table-column prop="attr_name" label="属性名称"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button size="mini" type="primary" icon="el-icon-edit">修改</el-button>
+                            <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">修改</el-button>
                             <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
                         </template>
                     </el-table-column>                    
@@ -65,6 +65,18 @@
     <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addParams">确 定</el-button>
+    </span>
+    </el-dialog>
+    <!-- 修改参数和属性弹窗 -->
+    <el-dialog :title="'提示' + titleText" :visible.sync="editDialogVisible"  width="30%">        
+    <el-form :model="editForm" ref="editFormRef" label-width="100px">
+    <el-form-item :label="titleText" prop="attr_name">
+        <el-input v-model="editForm.attr_name"></el-input>
+    </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editParams">确 定</el-button>
     </span>
     </el-dialog>
 </div>
@@ -95,6 +107,10 @@
                 addForm: {
                     attr_name: ''
                 },
+                // 修改动静态属性的对话框
+                editDialogVisible:false,
+                // 修改参数的表单数据对象
+                editForm: {},
             }
         },
         created() {
@@ -129,6 +145,28 @@
                     this.addDialogVisible=false,
                     this.getParamsData()                    
                 })
+            },
+            // 修改参数和属性对话框的展示和获取数据 categories/:id/attributes/:attrId
+            showEditDialog(attr_id){
+                this.$http.get(`categories/${this.idCate}/attributes/${attr_id}`,
+                {
+                params: { attr_sel: this.activeName }
+                }).then(res=>{
+                    this.editForm = res.data.data
+                    // console.log('edit',this.editForm)
+                    this.editDialogVisible=true
+                })                
+            },
+            // 提交修改参数和属性数据 categories/:id/attributes/:attrId
+            editParams(){
+                this.$http.put(`categories/${this.idCate}/attributes/${this.editForm.attr_id}`,
+                {   attr_name:this.editForm.attr_name,
+                    attr_sel:this.editForm.attr_sel
+                }).then(res=>{
+                    this.$message.success('修改成功!')
+                    this.editDialogVisible=false
+                    this.getParamsData()
+                })            
             },
 
             // 获取参数函数
@@ -165,6 +203,7 @@
                     return false
                 }
             },
+            // 返回选中的三级分类id
             idCate(){
                 if(this.cateKeys.length === 3){
                     return this.cateKeys[2]
@@ -172,6 +211,7 @@
                     return null
                 }
             },
+            // 返回动静态文字，在弹窗使用
             titleText(){
                 if(this.activeName=='only'){
                     return '动态参数'
