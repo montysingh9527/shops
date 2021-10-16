@@ -31,7 +31,7 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">修改</el-button>
-                            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+                            <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(scope.row.attr_id)">删除</el-button>
                         </template>
                     </el-table-column>                    
                 </el-table>
@@ -48,7 +48,7 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button size="mini" type="primary" icon="el-icon-edit" @click="showEditDialog(scope.row.attr_id)">修改</el-button>
-                            <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+                            <el-button size="mini" type="danger" icon="el-icon-delete" @click="removeParams(scope.row.attr_id)">删除</el-button>
                         </template>
                     </el-table-column>                    
                 </el-table>
@@ -167,6 +167,23 @@
                     this.editDialogVisible=false
                     this.getParamsData()
                 })            
+            },
+            // 删除参数
+            removeParams(attr_id){
+                this.$confirm('此操作将永久删除该属性?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$http.delete(`categories/${this.idCate}/attributes/`+ attr_id)
+                    this.$message.success('删除成功!')
+                    this.getParamsData()
+                }).catch(() => {
+                    this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                    });          
+                });
             },
 
             // 获取参数函数
