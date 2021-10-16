@@ -24,7 +24,12 @@
                 <!-- 动态参数表格 -->
                 <el-table :data="onlyData" border stripe> 
                     <!-- 展开行 -->
-                    <el-table-column type="expand"></el-table-column>
+                    <el-table-column type="expand">
+                        <template slot-scope="scope">
+                            <!-- {{scope.row.attr_vals}} -->
+                            <el-tag v-for="(item,i) in scope.row.attr_vals" :key="i" closable>{{item}}</el-tag>
+                        </template>
+                    </el-table-column>
                     <!-- 索引列 -->
                     <el-table-column type="index"></el-table-column> 
                     <el-table-column prop="attr_name" label="参数名称"></el-table-column>
@@ -200,7 +205,13 @@
                     this.$http.get(`categories/${this.idCate}/attributes`,{
                         params:{sel:this.activeName}
                     }).then(res=>{
-                        // console.log(res.data.data) 
+                        console.log(res.data.data) 
+                        // 将attr_vals字符串 分割为数组Array, 将数组渲染为el-tag标签
+                        res.data.data.forEach(item=>{         
+                            // 判断 item.attr_vals 是否为空数组。解决el-tag为空也展示标签              
+                           item.attr_vals = item.attr_vals ? item.attr_vals.split(',') : []
+                            console.log(item.attr_vals)
+                        })
                         // 根据activeName 判断是静态还是动态
                        if(this.activeName=='only'){
                            this.onlyData = res.data.data
@@ -243,5 +254,8 @@
 <style scoped lang="less">
 .cat_opt{
     margin: 20px 0;
+}
+.el-tag{
+    margin: 10px;
 }
 </style>
